@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.codingwithme.notesapp.R
 import com.codingwithme.notesapp.entities.Notes
@@ -41,11 +42,17 @@ class NotesAdapter() :
         holder.itemView.tvDesc.text = arrList[position].noteText
         holder.itemView.tvDateTime.text = arrList[position].dateTime
 
-        if (arrList[position].color != null){
-            holder.itemView.cardView.setCardBackgroundColor(Color.parseColor(arrList[position].color))
-        }else{
-            holder.itemView.cardView.setCardBackgroundColor(Color.parseColor(R.color.ColorLightBlack.toString()))
+        val color = if (!arrList[position].color.isNullOrEmpty()) {
+            try {
+                Color.parseColor(arrList[position].color)
+            } catch (e: IllegalArgumentException) {
+                // Warna tidak valid
+                ContextCompat.getColor(holder.itemView.context, R.color.ColorDefaultNote)
+            }
+        } else {
+            ContextCompat.getColor(holder.itemView.context, R.color.ColorDefaultNote)
         }
+        holder.itemView.cardView.setCardBackgroundColor(color)
 
         if (arrList[position].imgPath != null){
             holder.itemView.imgNote.setImageBitmap(BitmapFactory.decodeFile(arrList[position].imgPath))
